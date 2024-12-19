@@ -1,0 +1,10 @@
+{
+	"root": true,
+	"extends": [
+		"next/core-web-vitals",
+		"next/typescript",
+		"plugin:tailwindcss/recommended"
+	],
+
+	"parser": "@typescript-eslint/parser"
+}

@@ -1,0 +1,80 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  admin
+  user
+}
+
+enum Types {
+  digital
+  physical
+}
+
+model User {
+  id       String     @id @default(uuid())
+  name     String
+  email    String     @unique
+  role     Role       @default(user)
+  active   Boolean
+  comments Comments[]
+  Votes    Votes[]
+}
+
+model Product {
+  id          String  @id @default(uuid())
+  title       String
+  price       Float
+  description String?
+
+  image String?
+
+  type          Types
+  totalLikes    Int   @default(0)
+  totalDislikes Int   @default(0)
+}
+
+model Comments {
+  id      Int           @id @default(autoincrement())
+  text    String
+  status  CommentStatus @default(pending)
+  user    User          @relation(fields: [userId], references: [id])
+  userId  String
+  fkModel GenericType   @default(product)
+  fkId    String
+}
+
+model Votes {
+  id      Int              @id @default(autoincrement())
+  user    User             @relation(fields: [userId], references: [id])
+  userId  String
+  fkModel GenericType      @default(product)
+  fkId    String
+  type    GenericVotesType @default(Like)
+}
+
+enum GenericVotesType {
+  Like
+  Dislike
+}
+
+enum GenericType {
+  product
+}
+
+enum CommentStatus {
+  pending
+  approved
+}
